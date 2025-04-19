@@ -33,7 +33,7 @@
 <body>
   <header>
     <div class="container header-container">
-      <h1 class="logo">ShopMix</h1>
+      <h1 class="logo">SHEAS STORE</h1>
       <nav>
         <a href="index.html">Home</a>
         <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
@@ -96,7 +96,7 @@
 
   <footer>
     <div class="container">
-      <p>© 2024 SHEAS STORE</p>
+      <p>© 2024 girintwentyfour</p>
     </div>
   </footer>
 
@@ -123,7 +123,7 @@
       const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
       chatMessagesDiv.innerHTML = "";
       messages.forEach(msg => {
-        if (msg.sender === loggedInUser || msg.sender === "Admin") {
+        if ((msg.sender === loggedInUser || msg.sender === "Admin") && msg.username === loggedInUser) {
           const msgDiv = document.createElement("div");
           msgDiv.textContent = `[${msg.sender}] ${msg.message}`;
           chatMessagesDiv.appendChild(msgDiv);
@@ -131,6 +131,16 @@
       });
       chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
     }
+
+    sendChatBtn.addEventListener("click", () => {
+      const message = chatInput.value.trim();
+      if (message === "") return;
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      messages.push({ sender: loggedInUser, message, username: loggedInUser });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      chatInput.value = "";
+      loadChatMessages();
+    });
 
     sendChatBtn.addEventListener("click", () => {
       const message = chatInput.value.trim();

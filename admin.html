@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard - SHEAS STORE</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
@@ -111,11 +112,16 @@
       </div>
 
       <h2>Chat</h2>
-      <div class="chat-container">
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input">
-          <input type="text" id="chat-input" placeholder="Type a message..." />
-          <button id="send-chat-btn">Send</button>
+      <div class="chat-container" style="display:flex; flex-direction: row; height: 300px;">
+        <div id="chat-user-list" style="width: 150px; border-right: 1px solid #ccc; overflow-y: auto; padding-right: 10px;">
+          <!-- User list will be populated here -->
+        </div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column;">
+          <div class="chat-messages" id="chat-messages" style="flex-grow: 1; overflow-y: auto; border: 1px solid #ddd; padding: 5px; background: #f9f9f9;"></div>
+          <div class="chat-input" style="display: flex; margin-top: 5px;">
+            <input type="text" id="chat-input" placeholder="Type a message..." style="flex-grow: 1; padding: 8px; font-size: 14px;" />
+            <button id="send-chat-btn" style="padding: 8px 12px; font-size: 14px; background-color: #28a745; color: white; border: none; cursor: pointer;">Send</button>
+          </div>
         </div>
       </div>
 
@@ -218,19 +224,70 @@
     }
 
     function markOrderCompleted(orderIndex) {
-      const orders = JSON.parse(localStorage.getItem("orders")) || [];
-      if (orders[orderIndex]) {
-        orders[orderIndex].status = "Completed";
-        localStorage.setItem("orders", JSON.stringify(orders));
+      const loggedInUser = sessionStorage.getItem("adminLoggedInUser") || "admin";
+      fetch(`http://localhost:3001/api/orders/${orderIndex}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: "Completed", username: loggedInUser })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to update order status");
+        }
+        return response.json();
+      })
+      .then(() => {
         loadOrders();
-      }
+      })
+      .catch(error => {
+        console.error("Error updating order status:", error);
+        alert("Failed to update order status. Please try again later.");
+      });
     }
 
     // Chat feature
-    function loadChatMessages() {
+
+    let selectedUser = null;
+    const chatUserListDiv = document.getElementById("chat-user-list");
+
+    function loadChatUserList() {
       const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const users = [...new Set(messages.filter(m => m.sender !== "Admin").map(m => m.username))];
+      chatUserListDiv.innerHTML = "";
+      users.forEach(user => {
+        const userDiv = document.createElement("div");
+        userDiv.textContent = user;
+        userDiv.style.padding = "5px";
+        userDiv.style.cursor = "pointer";
+        userDiv.style.borderBottom = "1px solid #ccc";
+        if (user === selectedUser) {
+          userDiv.style.backgroundColor = "#007bff";
+          userDiv.style.color = "white";
+        }
+        userDiv.addEventListener("click", () => {
+          selectedUser = user;
+          loadChatUserList();
+          loadChatMessages();
+        });
+        chatUserListDiv.appendChild(userDiv);
+      });
+      if (!selectedUser && users.length > 0) {
+        selectedUser = users[0];
+        loadChatUserList();
+      }
+    }
+
+    function loadChatMessages() {
+      if (!selectedUser) {
+        chatMessages.innerHTML = "<p>Select a user to view chat.</p>";
+        return;
+      }
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const filteredMessages = messages.filter(m => m.username === selectedUser);
       chatMessages.innerHTML = "";
-      messages.forEach(msg => {
+      filteredMessages.forEach(msg => {
         const msgDiv = document.createElement("div");
         msgDiv.textContent = `[${msg.sender}] ${msg.message}`;
         chatMessages.appendChild(msgDiv);
@@ -240,12 +297,13 @@
 
     sendChatBtn.addEventListener("click", () => {
       const message = chatInput.value.trim();
-      if (message === "") return;
+      if (message === "" || !selectedUser) return;
       const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-      messages.push({ sender: "Admin", message });
+      messages.push({ sender: "Admin", message, username: selectedUser });
       localStorage.setItem("chatMessages", JSON.stringify(messages));
       chatInput.value = "";
       loadChatMessages();
+      loadChatUserList();
     });
 
     // Initialize

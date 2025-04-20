@@ -1,4 +1,4 @@
-const products = [
+  const products = [
   {
     id: 1,
     title: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
@@ -37,21 +37,35 @@ function renderProducts(productList) {
 }
 
 function addToCart(productId) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+  let cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
   const productInCart = cart.find(item => item.id === productId);
   if (productInCart) {
     productInCart.quantity += 1;
   } else {
     cart.push({ id: productId, quantity: 1 });
   }
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
   updateCartCount();
   alert("Product added to cart!");
 }
 
 function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  let count = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+  const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
+  let cart = [];
+  try {
+    cart = JSON.parse(cartRaw);
+    if (!Array.isArray(cart)) {
+      cart = [];
+    }
+  } catch {
+    cart = [];
+  }
+  let count = 0;
+  if (Array.isArray(cart)) {
+    count = cart.reduce((acc, item) => acc + (item.quantity || 0), 0);
+  }
   if (isNaN(count) || count < 0) {
     count = 0;
   }
@@ -77,3 +91,47 @@ document.getElementById("search-input").addEventListener("input", function () {
 // Initialize
 renderProducts(products);
 updateCartCount();
+
+// Show username modal if no username in sessionStorage
+document.addEventListener("DOMContentLoaded", () => {
+  const usernameModal = document.getElementById("username-modal");
+  if (!usernameModal) return; // modal not present on this page
+
+  const usernameInput = document.getElementById("username-input");
+  const usernameSubmit = document.getElementById("username-submit");
+
+  function hideModal() {
+    usernameModal.style.display = "none";
+  }
+
+  function showModal() {
+    usernameModal.style.display = "flex";
+  }
+
+  function saveUsername(name) {
+    sessionStorage.setItem("loggedInUser", name);
+  }
+
+  if (!sessionStorage.getItem("loggedInUser")) {
+    showModal();
+  } else {
+    hideModal();
+  }
+
+  usernameSubmit.addEventListener("click", () => {
+    const name = usernameInput.value.trim();
+    if (name.length === 0) {
+      alert("Please enter your name.");
+      return;
+    }
+    saveUsername(name);
+    hideModal();
+  });
+
+  usernameInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      usernameSubmit.click();
+    }
+  });
+});

@@ -200,7 +200,8 @@
     }
 
     function renderCart() {
-      const cartRaw = localStorage.getItem("cart");
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
       let cart = [];
       try {
         cart = JSON.parse(cartRaw);
@@ -255,7 +256,8 @@
     }
 
     function removeFromCart(productId) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      let cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
       const itemIndex = cart.findIndex(item => item.id === productId);
       if (itemIndex !== -1) {
         if (cart[itemIndex].quantity > 1) {
@@ -264,7 +266,7 @@
           cart.splice(itemIndex, 1);
         }
       }
-    localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
+      localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
       renderCart();
       updateCartCount();
     }
@@ -379,12 +381,13 @@
       .then(response => response.json())
       .then(data => {
         console.log("Orders submitted:", data);
-        // Clear cart
-        localStorage.removeItem("cart");
-        renderCart();
-        checkoutForm.style.display = "none";
-        checkoutBtn.style.display = "none";
-        orderConfirmation.textContent = "Order submitted successfully! Thank you for your purchase.";
+      // Clear cart
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      localStorage.removeItem(`cart_${loggedInUser}`);
+      renderCart();
+      checkoutForm.style.display = "none";
+      checkoutBtn.style.display = "none";
+      orderConfirmation.textContent = "Order submitted successfully! Thank you for your purchase.";
       })
       .catch(error => {
         console.error("Error submitting orders:", error);

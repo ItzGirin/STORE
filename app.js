@@ -37,35 +37,21 @@ function renderProducts(productList) {
 }
 
 function addToCart(productId) {
-  const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
-  let cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
   const productInCart = cart.find(item => item.id === productId);
   if (productInCart) {
     productInCart.quantity += 1;
   } else {
     cart.push({ id: productId, quantity: 1 });
   }
-  localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
+  localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
   alert("Product added to cart!");
 }
 
 function updateCartCount() {
-  const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
-  const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
-  let cart = [];
-  try {
-    cart = JSON.parse(cartRaw);
-    if (!Array.isArray(cart)) {
-      cart = [];
-    }
-  } catch {
-    cart = [];
-  }
-  let count = 0;
-  if (Array.isArray(cart)) {
-    count = cart.reduce((acc, item) => acc + (item.quantity || 0), 0);
-  }
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let count = cart.reduce((acc, item) => acc + item.quantity, 0);
   if (isNaN(count) || count < 0) {
     count = 0;
   }

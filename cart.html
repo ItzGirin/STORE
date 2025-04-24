@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ShopMix - Shopping Cart</title>
+  <title>SHEAS STORE - Shopping Cart</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     #checkout-form {
@@ -17,7 +17,7 @@
       display: block;
       margin-top: 10px;
     }
-    #checkout-form input, #checkout-form select, #checkout-form textarea {
+    #checkout-form input, #checkout-form select, #checkout-form textarea {-
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -110,6 +110,15 @@
         description: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
         shopeeUrl: "https://shopee.co.id/Komik-Invicible-seri-60-%E2%80%9CTHE-INVICIBLE-WAR!%E2%80%9D-(Bahasa-Inggris)-i.994813608.27483901311",
         checkoutUrl: "https://shopee.co.id/cart?itemKeys=27483901311.253215422518.&shopId=994813608"
+      },
+      {
+        id: 2,
+        title: "Minecraft Account",
+        price: 160000,
+        image: "https://media-hosting.imagekit.io/efff430840c64879/GAMBAR%20JAVA%20BEDROCK%202.png?Expires=1839734684&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Tvpwy7Sp~Q~5ST18j5q2LXTvmWH4L7658gV4TxDxY4dABA~EeSYs-dYx2FbryxNUOKRwwwT-mhtJCDwQKr~oI4K8u1dKDcb82MHxGmoAGYFttN~e80DhCcAaT6do6kyiCjd92wYwMOyGKb6kqZZHaL47my7Hx450v3xgYZvTQpONerj2E~bCEzCB6cSgo8fp1Hk94oAuCqjPmyCjzTwOJkQVZtUlerHGDmv8y3M9gq9hXIdbS2H1s-cFxkC2oAwYsRouw8ijWz-srAEQtJt0gc3FQb3wcU8fgYvEeQcloEtigyMekldrdeAxDfgpDvCcKA6yKp9qkd5JOTKrXmYJTw__",
+        description: "Minecraft Account",
+        shopeeUrl: "",
+        checkoutUrl: ""
       }
     ];
 
@@ -200,7 +209,8 @@
     }
 
     function renderCart() {
-      const cartRaw = localStorage.getItem("cart");
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
       let cart = [];
       try {
         cart = JSON.parse(cartRaw);
@@ -238,6 +248,26 @@
           <button onclick="removeFromCart(${item.id})" style="margin-top:10px; background-color:#d9534f; color: white;">Remove</button>
           <button onclick="redirectToShopee(${item.id})" style="margin-top:10px; background-color:#ff5722; color: white;">Buy on Shopee</button>
         `;
+        if (item.id === 2) {
+          // Replace Buy on Shopee button with DM For Buy button for Minecraft product
+          const dmButton = document.createElement("button");
+          dmButton.textContent = "DM For Buy";
+          dmButton.style.marginTop = "10px";
+          dmButton.style.backgroundColor = "#ff5722";
+          dmButton.style.color = "white";
+          dmButton.style.border = "none";
+          dmButton.style.borderRadius = "4px";
+          dmButton.style.cursor = "pointer";
+          dmButton.onclick = () => {
+            window.location.href = "https://www.instagram.com/direct/t/17847853344401219";
+          };
+          itemDiv.appendChild(dmButton);
+          // Remove the original Buy on Shopee button
+          const buyButton = itemDiv.querySelector("button[onclick^='redirectToShopee']");
+          if (buyButton) {
+            buyButton.remove();
+          }
+        }
         container.appendChild(itemDiv);
       });
 
@@ -255,7 +285,8 @@
     }
 
     function removeFromCart(productId) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      let cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
       const itemIndex = cart.findIndex(item => item.id === productId);
       if (itemIndex !== -1) {
         if (cart[itemIndex].quantity > 1) {
@@ -264,7 +295,7 @@
           cart.splice(itemIndex, 1);
         }
       }
-    localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
+      localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
       renderCart();
       updateCartCount();
     }
@@ -379,12 +410,13 @@
       .then(response => response.json())
       .then(data => {
         console.log("Orders submitted:", data);
-        // Clear cart
-        localStorage.removeItem("cart");
-        renderCart();
-        checkoutForm.style.display = "none";
-        checkoutBtn.style.display = "none";
-        orderConfirmation.textContent = "Order submitted successfully! Thank you for your purchase.";
+      // Clear cart
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      localStorage.removeItem(`cart_${loggedInUser}`);
+      renderCart();
+      checkoutForm.style.display = "none";
+      checkoutBtn.style.display = "none";
+      orderConfirmation.textContent = "Order submitted successfully! Thank you for your purchase.";
       })
       .catch(error => {
         console.error("Error submitting orders:", error);

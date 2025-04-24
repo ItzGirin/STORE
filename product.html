@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopMix - Product Details</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <h1 class="logo">SHEAS STORE</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="product-detail" class="product-detail"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 SHEAS STORE</p>
+    </div>
+  </footer>
+
+  <script>
+    // Sample product data (same as app.js)
+    const products = [
+      {
+        id: 1,
+        title: "Wireless Earbuds",
+        price: 299000,
+        image: "https://cf.shopee.co.id/file/1a2b3c4d5e6f7g8h9i0j",
+        description: "High quality wireless earbuds with noise cancellation."
+      },
+      {
+        id: 2,
+        title: "Smartphone Case",
+        price: 75000,
+        image: "https://cf.shopee.co.id/file/2b3c4d5e6f7g8h9i0j1k",
+        description: "Durable and stylish smartphone case."
+      },
+      {
+        id: 3,
+        title: "Gaming Mouse",
+        price: 450000,
+        image: "https://cf.shopee.co.id/file/3c4d5e6f7g8h9i0j1k2l",
+        description: "Ergonomic gaming mouse with customizable buttons."
+      },
+      {
+        id: 4,
+        title: "Bluetooth Speaker",
+        price: 350000,
+        image: "https://cf.shopee.co.id/file/4d5e6f7g8h9i0j1k2l3m",
+        description: "Portable Bluetooth speaker with deep bass."
+      },
+      {
+        id: 5,
+        title: "Fitness Tracker",
+        price: 550000,
+        image: "https://cf.shopee.co.id/file/5e6f7g8h9i0j1k2l3m4n",
+        description: "Track your fitness and health metrics easily."
+      }
+    ];
+
+    function formatPrice(price) {
+      return "Rp " + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+      document.getElementById("cart-count").textContent = count;
+    }
+
+    function addToCart(productId) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const product = products.find(p => p.id === productId);
+      if (!product) return alert("Product not found");
+      const cartItem = cart.find(item => item.id === productId);
+      if (cartItem) {
+        cartItem.quantity++;
+      } else {
+        cart.push({ id: productId, quantity: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      alert("Added to cart");
+    }
+
+    function renderProduct(product) {
+      const container = document.getElementById("product-detail");
+      let currentImageIndex = 0;
+
+      function showImage(index) {
+        const imgElement = document.getElementById("product-main-image");
+        if (imgElement && product.images && product.images.length > 0) {
+          imgElement.src = product.images[index];
+        }
+      }
+
+      container.innerHTML = `
+        <div class="product-card">
+          <img id="product-main-image" src="${product.images ? product.images[0] : product.image}" alt="${product.title}" class="product-image" />
+          <div class="image-controls">
+            <button id="prev-image">Prev</button>
+            <button id="next-image">Next</button>
+          </div>
+          <h2 class="product-title">${product.title}</h2>
+          <p class="product-price">${formatPrice(product.price)}</p>
+          <p class="product-description">${product.description}</p>
+          <button onclick="addToCart(${product.id})" title="Add to Cart" style="font-size: 18px; margin-right: 8px;">🛒➕</button>
+          <button onclick="redirectToCheckout(${product.id})">Buy</button>
+          <button onclick="redirectToProduct(${product.id})">View on Shopee</button>
+          <button onclick="window.location.href='index.html'">Back to SHEAS STORE</button>
+        </div>
+      `;
+
+      // Add event listeners for image navigation
+      document.getElementById("prev-image").addEventListener("click", () => {
+        if (!product.images || product.images.length === 0) return;
+        currentImageIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
+        showImage(currentImageIndex);
+      });
+
+      document.getElementById("next-image").addEventListener("click", () => {
+        if (!product.images || product.images.length === 0) return;
+        currentImageIndex = (currentImageIndex + 1) % product.images.length;
+        showImage(currentImageIndex);
+      });
+    }
+
+    // Load selected product
+    const selectedProductId = parseInt(localStorage.getItem("selectedProductId"));
+    const product = products.find(p => p.id === selectedProductId);
+    if (product) {
+      renderProduct(product);
+    } else {
+      document.getElementById("product-detail").innerHTML = "<p>Product not found.</p>";
+    }
+
+    updateCartCount();
+
+    function addToCart(productId) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const product = products.find(p => p.id === productId);
+      if (!product) return alert("Product not found");
+      const cartItem = cart.find(item => item.id === productId);
+      if (cartItem) {
+        cartItem.quantity++;
+      } else {
+        cart.push({ id: productId, quantity: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+      alert("Added to cart");
+    }
+  </script>
+</body>
+</html>

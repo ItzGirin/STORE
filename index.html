@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SHEAS STORE- Home</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+  <body>
+    <header>
+      <div class="container header-container">
+        <h1 class="logo">SHEAS STORE</h1>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="cart.html">Keranjang (<span id="cart-count">0</span>)</a>
+          <!-- <a href="login.html">Login</a> -->
+          <a href="admin.html">Dashboard</a>
+        </nav>
+      </div>
+      <div class="container search-container">
+        <input type="text" id="search-input" placeholder="Search products..." />
+      </div>
+    </header>
+
+    <!-- Username input modal -->
+    <div id="username-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+      <div style="background:white; padding:20px; border-radius:5px; max-width:400px; width:90%;">
+        <h2>Enter Your Name</h2>
+        <input type="text" id="username-input" placeholder="Your name" style="width:100%; padding:8px; margin-top:10px;"/>
+        <button id="username-submit" style="margin-top:15px; padding:8px 12px;">Submit</button>
+      </div>
+    </div>
+
+  <main class="container">
+    <h2>Products</h2>
+    <div id="product-list" class="product-list"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 SHEAS STORE.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login/Register - SHEAS STORE</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .hidden {
+      display: none;
+    }
+    .toggle-link {
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .back-home {
+      margin-top: 20px;
+      display: inline-block;
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <h1 class="logo">SHEAS STORE</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+        <!-- <a href="login.html" id="login-menu">Login</a> -->
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="register-form-container">
+      <h2>Register</h2>
+      <form id="register-form">
+        <label for="register-username">Email:</label><br />
+        <input type="email" id="register-username" required /><br /><br />
+        <label for="register-password">Password:</label><br />
+        <input type="password" id="register-password" required /><br /><br />
+        <button type="submit" class="btn">Register</button>
+      </form>
+      <p id="register-error" style="color: red; display: none;"></p>
+      <p id="register-success" style="color: green; display: none;">Registration successful! You can now login.</p>
+      <span class="back-home" id="back-home-register">Kembali ke Beranda</span>
+    </div>
+
+  <main class="container">
+    <div id="register-form-container">
+      <h2>Register</h2>
+      <form id="register-form">
+        <label for="register-username">Email:</label><br />
+        <input type="email" id="register-username" required /><br /><br />
+        <label for="register-password">Password:</label><br />
+        <input type="password" id="register-password" required /><br /><br />
+        <button type="submit" class="btn">Register</button>
+      </form>
+      <p id="register-error" style="color: red; display: none;"></p>
+      <p id="register-success" style="color: green; display: none;">Registration successful! You can now login.</p>
+      <span class="back-home" id="back-home-register">Kembali ke Beranda</span>
+    </div>
+
+  <script>
+    const registerForm = document.getElementById("register-form");
+    const registerError = document.getElementById("register-error");
+    const registerSuccess = document.getElementById("register-success");
+    const backHomeRegister = document.getElementById("back-home-register");
+
+    backHomeRegister.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    // Handle registration for admin only
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("register-username").value.trim();
+      const password = document.getElementById("register-password").value.trim();
+
+      const adminEmail = "girin2423@gmail.com";
+      const adminPassword = "dchr3514";
+
+      if (email === adminEmail && password === adminPassword) {
+        registerError.style.display = "none";
+        registerSuccess.style.display = "block";
+        registerForm.reset();
+      } else {
+        registerError.textContent = "Only admin registration is allowed.";
+        registerError.style.display = "block";
+        registerSuccess.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>

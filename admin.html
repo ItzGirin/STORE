@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - SHEAS STORE</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header, footer {
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+    }
+    header h1, footer p {
+      margin: 0;
+    }
+    main {
+      padding: 20px;
+    }
+    .login-container, .dashboard-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .hidden {
+      display: none;
+    }
+    .order {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .order-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .chat-container {
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-width: 600px;
+      margin: 20px auto 0;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      background: #f9f9f9;
+    }
+    .chat-input {
+      display: flex;
+    }
+    .chat-input input {
+      flex-grow: 1;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .chat-input button {
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .chat-input button:hover {
+      background-color: #218838;
+    }
+    .btn {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SHEAS STORE Admin Dashboard</h1>
+  </header>
+  <main>
+    <div class="login-container" id="login-container">
+      <h2>Admin Login</h2>
+      <form id="login-form">
+        <label for="username">Email:</label><br />
+        <input type="email" id="username" required /><br /><br />
+        <label for="password">Password:</label><br />
+        <input type="password" id="password" required /><br /><br />
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <p id="login-error" style="color: red; display: none;">Invalid email or password.</p>
+    </div>
+
+    <div class="dashboard-container hidden" id="dashboard-container">
+      <h2>Orders</h2>
+      <div id="orders-list">
+        <!-- Orders will be listed here -->
+      </div>
+
+      <h2>Chat</h2>
+      <div class="chat-container" style="display:flex; flex-direction: row; height: 300px;">
+        <div id="chat-user-list" style="width: 150px; border-right: 1px solid #ccc; overflow-y: auto; padding-right: 10px;">
+          <!-- User list will be populated here -->
+        </div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column;">
+          <div class="chat-messages" id="chat-messages" style="flex-grow: 1; overflow-y: auto; border: 1px solid #ddd; padding: 5px; background: #f9f9f9;"></div>
+          <div class="chat-input" style="display: flex; margin-top: 5px;">
+            <input type="text" id="chat-input" placeholder="Type a message..." style="flex-grow: 1; padding: 8px; font-size: 14px;" />
+            <button id="send-chat-btn" style="padding: 8px 12px; font-size: 14px; background-color: #28a745; color: white; border: none; cursor: pointer;">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="logout-btn" class="btn" style="margin-top: 20px;">Logout</button>
+      <button id="back-home-btn" class="btn" style="margin-top: 10px;">Back to Home</button>
+    </div>
+  </main>
+  <footer>
+    <p>© 2024 SHEAS STORE</p>
+  </footer>
+
+  <script>
+    const adminEmail = "girin2423@gmail.com";
+    const adminPassword = "dchr3514";
+
+    const loginContainer = document.getElementById("login-container");
+    const dashboardContainer = document.getElementById("dashboard-container");
+    const loginForm = document.getElementById("login-form");
+    const loginError = document.getElementById("login-error");
+    const ordersList = document.getElementById("orders-list");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendChatBtn = document.getElementById("send-chat-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const backHomeBtn = document.getElementById("back-home-btn");
+
+    // Check if admin is logged in
+    function checkLogin() {
+      const loggedIn = sessionStorage.getItem("adminLoggedIn");
+      if (loggedIn === "true") {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    }
+
+    backHomeBtn.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    function showLogin() {
+      loginContainer.classList.remove("hidden");
+      dashboardContainer.classList.add("hidden");
+    }
+
+    function showDashboard() {
+      loginContainer.classList.add("hidden");
+      dashboardContainer.classList.remove("hidden");
+      loadOrders();
+      loadChatMessages();
+    }
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      if (email === adminEmail && password === adminPassword) {
+        sessionStorage.setItem("adminLoggedIn", "true");
+        sessionStorage.setItem("adminLoggedInUser", email);
+        loginError.style.display = "none";
+        showDashboard();
+      } else {
+        loginError.style.display = "block";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("adminLoggedIn");
+      showLogin();
+    });
+
+    // Orders management
+    function loadOrders() {
+      const loggedInUser = sessionStorage.getItem("adminLoggedInUser") || "admin";
+      fetch(`http://localhost:3001/api/orders?username=${encodeURIComponent(loggedInUser)}`)
+        .then(response => response.json())
+        .then(orders => {
+          ordersList.innerHTML = "";
+          if (orders.length === 0) {
+            ordersList.innerHTML = "<p>No orders yet.</p>";
+            return;
+          }
+          orders.forEach((order, index) => {
+            const orderDiv = document.createElement("div");
+            orderDiv.className = "order";
+            orderDiv.innerHTML = `
+              <div class="order-header">Order #${index + 1} - ${order.status}</div>
+              <div>Product: ${order.productTitle}</div>
+              <div>Quantity: ${order.quantity}</div>
+              <div>Customer: ${order.customer}</div>
+              <button onclick="markOrderCompleted(${index})" class="btn">Mark as Completed</button>
+            `;
+            ordersList.appendChild(orderDiv);
+          });
+        })
+        .catch(error => {
+          console.error("Error loading orders:", error);
+          ordersList.innerHTML = "<p>Failed to load orders.</p>";
+        });
+    }
+
+    function markOrderCompleted(orderIndex) {
+      const loggedInUser = sessionStorage.getItem("adminLoggedInUser") || "admin";
+      fetch(`http://localhost:3001/api/orders/${orderIndex}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: "Completed", username: loggedInUser })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to update order status");
+        }
+        return response.json();
+      })
+      .then(() => {
+        loadOrders();
+      })
+      .catch(error => {
+        console.error("Error updating order status:", error);
+        alert("Failed to update order status. Please try again later.");
+      });
+    }
+
+    // Chat feature
+
+    let selectedUser = null;
+    const chatUserListDiv = document.getElementById("chat-user-list");
+
+    function loadChatUserList() {
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const users = [...new Set(messages.filter(m => m.sender !== "Admin").map(m => m.username))];
+      chatUserListDiv.innerHTML = "";
+      users.forEach(user => {
+        const userDiv = document.createElement("div");
+        userDiv.textContent = user;
+        userDiv.style.padding = "5px";
+        userDiv.style.cursor = "pointer";
+        userDiv.style.borderBottom = "1px solid #ccc";
+        if (user === selectedUser) {
+          userDiv.style.backgroundColor = "#007bff";
+          userDiv.style.color = "white";
+        }
+        userDiv.addEventListener("click", () => {
+          selectedUser = user;
+          loadChatUserList();
+          loadChatMessages();
+        });
+        chatUserListDiv.appendChild(userDiv);
+      });
+      if (!selectedUser && users.length > 0) {
+        selectedUser = users[0];
+        loadChatUserList();
+      }
+    }
+
+    function loadChatMessages() {
+      if (!selectedUser) {
+        chatMessages.innerHTML = "<p>Select a user to view chat.</p>";
+        return;
+      }
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const filteredMessages = messages.filter(m => m.username === selectedUser);
+      chatMessages.innerHTML = "";
+      filteredMessages.forEach(msg => {
+        const msgDiv = document.createElement("div");
+        msgDiv.textContent = `[${msg.sender}] ${msg.message}`;
+        chatMessages.appendChild(msgDiv);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    sendChatBtn.addEventListener("click", () => {
+      const message = chatInput.value.trim();
+      if (message === "" || !selectedUser) return;
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      messages.push({ sender: "Admin", message, username: selectedUser });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      chatInput.value = "";
+      loadChatMessages();
+      loadChatUserList();
+    });
+
+    // Initialize
+    checkLogin();
+  </script>
+</body>
+</html>

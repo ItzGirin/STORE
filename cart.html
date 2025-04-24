@@ -1,0 +1,432 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SHEAS STORE - Shopping Cart</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    #checkout-form {
+      max-width: 600px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      display: none;
+    }
+    #checkout-form label {
+      display: block;
+      margin-top: 10px;
+    }
+    #checkout-form input, #checkout-form select, #checkout-form textarea {-
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    #order-confirmation {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+      <h1 class="logo">SHEAS STORE</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Your Shopping Cart</h2>
+    <button id="back-home-btn" style="margin-bottom: 20px;">Back to Home</button>
+    <div id="cart-items"></div>
+    <div id="cart-summary" class="cart-summary"></div>
+    <button id="checkout-btn" style="display:none;">Checkout</button>
+
+    <form id="checkout-form">
+      <h3>Checkout Form</h3>
+      <label for="name">Nama:</label>
+      <input type="text" id="name" placeholder="Masukkan nama Anda" required />
+
+      <label for="province">Provinsi:</label>
+      <input type="text" id="province" placeholder="Ketik provinsi Anda" required />
+
+      <label for="city">Kota/Kabupaten:</label>
+      <input type="text" id="city" placeholder="Ketik kota/kabupaten Anda" required />
+
+      <label for="district">Kecamatan:</label>
+      <input type="text" id="district" placeholder="Ketik kecamatan Anda" required />
+
+      <label for="postal-code">Kode Pos:</label>
+      <input type="text" id="postal-code" />
+
+      <label for="detailed-address">Alamat Rinci:</label>
+      <textarea id="detailed-address" rows="3" placeholder="Contoh: Rumah warna oren, gerbang hitam"></textarea>
+
+      <label for="payment-method">Metode Pembayaran:</label>
+      <select id="payment-method" required>
+        <option value="">Pilih metode pembayaran</option>
+        <option value="transfer_bank">Transfer Bank</option>
+        <option value="kartu_kredit_debit">Kartu Kredit/Debit</option>
+        <option value="bri_direct_debit">BRI Direct Debit</option>
+        <option value="bca_only_click">BCA Only Click</option>
+        <option value="bayar_tunai_mitra_agen">Bayar Tunai Mitra Agen</option>
+      </select>
+
+      <button type="submit" class="btn" style="margin-top: 15px;">Submit Order</button>
+    </form>
+
+    <div id="order-confirmation"></div>
+
+    <h2>Chat with Admin</h2>
+    <div class="chat-container" style="border:1px solid #ccc; padding:10px; max-width:600px; height:300px; display:flex; flex-direction:column;">
+      <div id="chat-messages" style="flex-grow:1; overflow-y:auto; margin-bottom:10px; border:1px solid #ddd; padding:5px; background:#f9f9f9;"></div>
+      <div style="display:flex;">
+        <input type="text" id="chat-input" placeholder="Type a message..." style="flex-grow:1; padding:8px; font-size:14px;" />
+        <button id="send-chat-btn" style="padding:8px 12px; font-size:14px; background-color:#28a745; color:white; border:none; cursor:pointer;">Send</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© 2024 girintwentyfour</p>
+    </div>
+  </footer>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        title: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
+        price: 59000,
+        image: "https://media-hosting.imagekit.io/7f5eefb2dd184f89/id-11134207-7rbka-m8pkjqd6yg7m8b.jpeg?Expires=1839663017&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=omD3myOc63l91g5V9BgHVy8zhflsj6SLTjX5Undan7z827tCIechQITvrltnAI29XcYR4f7Mkvv3oPYHJsTcTtKRjPCr-vU3jLqDvUYmqFs9FhTAz8IT-5zBwaqw1ESL70W4E9BE612-CtQsdpxtEHlZS45lXr9PD9M5o3OTCb4bSt72wCmY0yGNEaCD3lWztR0UzxFcLRIWftoTCDWBWnLoxCULJlOAXsIB3CFhKrAlCfXiCuwa4wT7MHX6-L6KLpRfPuExKu6EJAdFvB54FKt9mZJP-b-4QbxKCWwAZNrvnE2cM35gDlUr9QlDGP~jdIOmdhG4KEbGSHbuvjpOtQ__",
+        description: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
+        shopeeUrl: "https://shopee.co.id/Komik-Invicible-seri-60-%E2%80%9CTHE-INVICIBLE-WAR!%E2%80%9D-(Bahasa-Inggris)-i.994813608.27483901311",
+        checkoutUrl: "https://shopee.co.id/cart?itemKeys=27483901311.253215422518.&shopId=994813608"
+      },
+      {
+        id: 2,
+        title: "Minecraft Account",
+        price: 160000,
+        image: "https://media-hosting.imagekit.io/efff430840c64879/GAMBAR%20JAVA%20BEDROCK%202.png?Expires=1839734684&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Tvpwy7Sp~Q~5ST18j5q2LXTvmWH4L7658gV4TxDxY4dABA~EeSYs-dYx2FbryxNUOKRwwwT-mhtJCDwQKr~oI4K8u1dKDcb82MHxGmoAGYFttN~e80DhCcAaT6do6kyiCjd92wYwMOyGKb6kqZZHaL47my7Hx450v3xgYZvTQpONerj2E~bCEzCB6cSgo8fp1Hk94oAuCqjPmyCjzTwOJkQVZtUlerHGDmv8y3M9gq9hXIdbS2H1s-cFxkC2oAwYsRouw8ijWz-srAEQtJt0gc3FQb3wcU8fgYvEeQcloEtigyMekldrdeAxDfgpDvCcKA6yKp9qkd5JOTKrXmYJTw__",
+        description: "Minecraft Account",
+        shopeeUrl: "",
+        checkoutUrl: ""
+      }
+    ];
+
+    // Chat feature for client
+    const chatMessagesDiv = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendChatBtn = document.getElementById("send-chat-btn");
+    const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+
+    function loadChatMessages() {
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      chatMessagesDiv.innerHTML = "";
+      messages.forEach(msg => {
+        if ((msg.sender === loggedInUser || msg.sender === "Admin") && msg.username === loggedInUser) {
+          const msgDiv = document.createElement("div");
+          msgDiv.textContent = `[${msg.sender}] ${msg.message}`;
+          chatMessagesDiv.appendChild(msgDiv);
+        }
+      });
+      chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
+
+    sendChatBtn.addEventListener("click", () => {
+      const message = chatInput.value.trim();
+      if (message === "") return;
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      messages.push({ sender: loggedInUser, message, username: loggedInUser });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      chatInput.value = "";
+      loadChatMessages();
+    });
+
+    sendChatBtn.addEventListener("click", () => {
+      const message = chatInput.value.trim();
+      if (message === "") return;
+      const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      messages.push({ sender: loggedInUser, message });
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      chatInput.value = "";
+      loadChatMessages();
+    });
+
+    loadChatMessages();
+
+    // API endpoints for Indonesian administrative divisions
+    const API_BASE = "https://dev.farizdotid.com/api/daerahindonesia";
+
+    // Removed fetchProvinces function since province is now text input
+
+    // Removed fetchCities function since city is now text input
+
+    // Removed fetchDistricts function since district is now text input
+
+    // Postal code input is editable by user
+    const postalCodeInput = document.getElementById("postal-code");
+    postalCodeInput.readOnly = false;
+
+    // Removed provinceSelect and citySelect event listeners since province and city are text inputs
+
+    // No event listener for province or city input change
+
+    // Removed districtSelect event listener since district is now text input
+
+    function formatPrice(price) {
+      return "Rp " + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function updateCartCount() {
+    const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+    const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
+    let cart = [];
+    try {
+      cart = JSON.parse(cartRaw);
+      if (!Array.isArray(cart)) {
+        cart = [];
+      }
+    } catch {
+      cart = [];
+    }
+      let count = 0;
+      if (Array.isArray(cart)) {
+        count = cart.reduce((acc, item) => acc + (item.quantity || 0), 0);
+      }
+      if (isNaN(count) || count < 0) {
+        count = 0;
+      }
+      document.getElementById("cart-count").textContent = count;
+    }
+
+    function renderCart() {
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      const cartRaw = localStorage.getItem(`cart_${loggedInUser}`);
+      let cart = [];
+      try {
+        cart = JSON.parse(cartRaw);
+        if (!Array.isArray(cart)) {
+          cart = [];
+        }
+      } catch {
+        cart = [];
+      }
+      const container = document.getElementById("cart-items");
+      const summary = document.getElementById("cart-summary");
+      const checkoutBtn = document.getElementById("checkout-btn");
+      container.innerHTML = "";
+      summary.innerHTML = "";
+      if (cart.length === 0) {
+        container.innerHTML = "<p>Your cart is empty.</p>";
+        checkoutBtn.style.display = "none";
+        return;
+      }
+      checkoutBtn.style.display = "inline-block";
+
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.id);
+        if (!product) {
+          console.warn(`Product with id ${item.id} not found in products list.`);
+          return;
+        }
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "product-card";
+        itemDiv.innerHTML = `
+          <img src="${product.image}" alt="${product.title}" class="product-image" />
+          <div class="product-title">${product.title}</div>
+          <div>Price: ${formatPrice(product.price)}</div>
+          <div>Quantity: ${item.quantity}</div>
+          <button onclick="removeFromCart(${item.id})" style="margin-top:10px; background-color:#d9534f; color: white;">Remove</button>
+          <button onclick="redirectToShopee(${item.id})" style="margin-top:10px; background-color:#ff5722; color: white;">Buy on Shopee</button>
+        `;
+        if (item.id === 2) {
+          // Replace Buy on Shopee button with DM For Buy button for Minecraft product
+          const dmButton = document.createElement("button");
+          dmButton.textContent = "DM For Buy";
+          dmButton.style.marginTop = "10px";
+          dmButton.style.backgroundColor = "#ff5722";
+          dmButton.style.color = "white";
+          dmButton.style.border = "none";
+          dmButton.style.borderRadius = "4px";
+          dmButton.style.cursor = "pointer";
+          dmButton.onclick = () => {
+            window.location.href = "https://www.instagram.com/direct/t/17847853344401219";
+          };
+          itemDiv.appendChild(dmButton);
+          // Remove the original Buy on Shopee button
+          const buyButton = itemDiv.querySelector("button[onclick^='redirectToShopee']");
+          if (buyButton) {
+            buyButton.remove();
+          }
+        }
+        container.appendChild(itemDiv);
+      });
+
+      summary.innerHTML = "";
+      updateCartCount();
+    }
+
+    function redirectToShopee(productId) {
+      const product = products.find(p => p.id === productId);
+      if (product && product.shopeeUrl) {
+        window.open(product.shopeeUrl, "_blank");
+      } else {
+        alert("Shopee link not available");
+      }
+    }
+
+    function removeFromCart(productId) {
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      let cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
+      const itemIndex = cart.findIndex(item => item.id === productId);
+      if (itemIndex !== -1) {
+        if (cart[itemIndex].quantity > 1) {
+          cart[itemIndex].quantity -= 1;
+        } else {
+          cart.splice(itemIndex, 1);
+        }
+      }
+      localStorage.setItem(`cart_${loggedInUser}`, JSON.stringify(cart));
+      renderCart();
+      updateCartCount();
+    }
+
+    document.getElementById("back-home-btn").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+
+    const checkoutBtn = document.getElementById("checkout-btn");
+    const checkoutForm = document.getElementById("checkout-form");
+    const orderConfirmation = document.getElementById("order-confirmation");
+
+    checkoutBtn.addEventListener("click", () => {
+      checkoutForm.style.display = "block";
+      checkoutBtn.style.display = "none";
+      orderConfirmation.textContent = "";
+      // Load saved address if any
+      const savedAddress = JSON.parse(localStorage.getItem("savedAddress"));
+      if (savedAddress) {
+        provinceInput.value = savedAddress.province || "";
+        cityInput.value = savedAddress.city || "";
+        districtInput.value = savedAddress.district || "";
+        postalCodeInput.value = savedAddress.postalCode || "";
+        detailedAddressInput.value = savedAddress.detailedAddress || "";
+      }
+      paymentMethodSelect.value = "";
+    });
+
+    checkoutForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const province = provinceInput.value.trim();
+      const city = cityInput.value.trim();
+      const district = districtInput.value.trim();
+      const postalCode = postalCodeInput.value.trim();
+      const paymentMethod = paymentMethodSelect.value;
+      const detailedAddress = detailedAddressInput.value.trim();
+
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+      if (!province) {
+        alert("Please enter your province.");
+        return;
+      }
+      if (!city) {
+        alert("Please enter your city or regency.");
+        return;
+      }
+      if (!district) {
+        alert("Please enter your district.");
+        return;
+      }
+      if (!postalCode) {
+        alert("Please enter your postal code.");
+        return;
+      }
+      if (!paymentMethod) {
+        alert("Please select a payment method.");
+        return;
+      }
+      if (!detailedAddress) {
+        alert("Please enter your detailed address.");
+        return;
+      }
+
+      // Save address for future use
+      const savedAddress = {
+        name,
+        province,
+        city,
+        district,
+        postalCode,
+        detailedAddress
+      };
+      localStorage.setItem("savedAddress", JSON.stringify(savedAddress));
+
+      // Save order data
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      const cart = JSON.parse(localStorage.getItem(`cart_${loggedInUser}`)) || [];
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      const orders = [];
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.id);
+        if (product) {
+          orders.push({
+            productId: product.id,
+            productTitle: product.title,
+            quantity: item.quantity,
+            customer: name + ", " + detailedAddress + ", " + district + ", " + city + ", " + province,
+            postalCode: postalCode,
+            paymentMethod: paymentMethod,
+            status: "Pending",
+            username: loggedInUser
+          });
+        }
+      });
+
+      // Send orders to backend API
+      fetch("http://localhost:3001/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ orders })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Orders submitted:", data);
+      // Clear cart
+      const loggedInUser = sessionStorage.getItem("loggedInUser") || "guest";
+      localStorage.removeItem(`cart_${loggedInUser}`);
+      renderCart();
+      checkoutForm.style.display = "none";
+      checkoutBtn.style.display = "none";
+      orderConfirmation.textContent = "Order submitted successfully! Thank you for your purchase.";
+      })
+      .catch(error => {
+        console.error("Error submitting orders:", error);
+        alert("Failed to submit order. Please try again later.");
+      });
+    });
+
+    // Initialize
+    renderCart();
+    updateCartCount();
+  </script>
+</body>
+</html>

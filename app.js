@@ -4,7 +4,7 @@ const products = [
     title: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
     price: 59000,
     images: [
-      "https://media-hosting.imagekit.io/7f5eefb2dd184f89/id-11134207-7rbka-m8pkjqd6yg7m8b.jpeg?Expires=1839663017&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=omD3myOc63l91g5V9BgHVy8zhflsj6SLTjX5Undan7z827tCIechQITvrltnAI29XcYR4f7Mkvv3oPYHJsTcTtKRjPCr-vU3jLqDvUYmqFs9FhTAz8IT-5zBwaqw1ESL70W4E9BE612-CtQsdpxtEHlZS45lXr9PD9M5o3OTCb4bSt72wCmY0yGNEaCD3lWztR0UzxFcLRIWftoTCDWBWnLoxCULJlOAXsIB3CFhKrAlCfXiCuwa4wT7MHX6-L6KLpRfPuExKu6EJAdFvB54FKt9mZJP-b-4QbxKCWwAZNrvnE2cM35gDlUr9QlDGP~jdIOmdhG4KEbGSHbuvjpOtQ__"
+      "komik1.jpeg"
     ],
     description: "Komik Invicible seri 60 “THE INVICIBLE WAR!” (Bahasa Inggris)",
     shopeeUrl: "https://shopee.co.id/Komik-Invicible-seri-60-%E2%80%9CTHE-INVICIBLE-WAR!%E2%80%9D-(Bahasa-Inggris)-i.994813608.27483901311",
@@ -15,7 +15,7 @@ const products = [
     title: "Minecraft Account",
     price: 160000,
     images: [
-      "https://media-hosting.imagekit.io/efff430840c64879/GAMBAR%20JAVA%20BEDROCK%202.png?Expires=1839734684&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Tvpwy7Sp~Q~5ST18j5q2LXTvmWH4L7658gV4TxDxY4dABA~EeSYs-dYx2FbryxNUOKRwwwT-mhtJCDwQKr~oI4K8u1dKDcb82MHxGmoAGYFttN~e80DhCcAaT6do6kyiCjd92wYwMOyGKb6kqZZHaL47my7Hx450v3xgYZvTQpONerj2E~bCEzCB6cSgo8fp1Hk94oAuCqjPmyCjzTwOJkQVZtUlerHGDmv8y3M9gq9hXIdbS2H1s-cFxkC2oAwYsRouw8ijWz-srAEQtJt0gc3FQb3wcU8fgYvEeQcloEtigyMekldrdeAxDfgpDvCcKA6yKp9qkd5JOTKrXmYJTw__"
+      "Gambar java bedrock.jpg"
     ],
     description: "Minecraft Account",
     shopeeUrl: "",
